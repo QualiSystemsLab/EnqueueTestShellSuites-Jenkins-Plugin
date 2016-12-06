@@ -14,8 +14,8 @@
  */
 package org.jenkinsci.plugins.cloudshell;
 
-import com.quali.cloudshell.QsServerDetails;
-import com.quali.cloudshell.SandboxApiGateway;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
+
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.Launcher;
@@ -24,31 +24,32 @@ import hudson.model.BuildListener;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
 
-public abstract class CloudShellBuildStep implements Describable<CloudShellBuildStep>, ExtensionPoint {
+public abstract class TestShellBuildStep implements Describable<TestShellBuildStep>, ExtensionPoint {
 
-	protected SandboxApiGateway CsServer;
+	protected SnQApiGateway CsServer;
 
-	public SandboxApiGateway getCsServer() {
+	public SnQApiGateway getCsServer() {
 		return CsServer;
 	}
 
-	public static DescriptorExtensionList<CloudShellBuildStep, CSBuildStepDescriptor> all() {
-		return Jenkins.getInstance().getDescriptorList(CloudShellBuildStep.class);
+	public static DescriptorExtensionList<TestShellBuildStep, TSBuildStepDescriptor> all() {
+		return Jenkins.getInstance().getDescriptorList(TestShellBuildStep.class);
 	}
 
-	public abstract boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, QsServerDetails server)
+	public abstract boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server)
 			throws Exception;
 
-	public CSBuildStepDescriptor getDescriptor() {
-		return (CSBuildStepDescriptor)Jenkins.getInstance().getDescriptor(getClass());
+	public TSBuildStepDescriptor getDescriptor() {
+		return (TSBuildStepDescriptor)Jenkins.getInstance().getDescriptor(getClass());
 	}
 
-	public static abstract class CSBuildStepDescriptor extends Descriptor<CloudShellBuildStep> {
+	public static abstract class TSBuildStepDescriptor extends Descriptor<TestShellBuildStep> {
 
-		protected CSBuildStepDescriptor() { }
+		protected TSBuildStepDescriptor() { }
 
-		protected CSBuildStepDescriptor(Class<? extends CloudShellBuildStep> clazz) {
+		protected TSBuildStepDescriptor(Class<? extends TestShellBuildStep> clazz) {
 			super(clazz);
 		}
 	}

@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.cloudshell.steps;
 
 import com.quali.cloudshell.QsExceptions.SandboxApiException;
-import com.quali.cloudshell.QsServerDetails;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import com.quali.cloudshell.SandboxApiGateway;
 import hudson.EnvVars;
 import hudson.model.TaskListener;
@@ -46,8 +46,9 @@ public class StepsCommon {
     private SandboxApiGateway getSandboxApiGateway(TaskListener listener) {
         CloudShellConfig.DescriptorImpl descriptorImpl =
                 (CloudShellConfig.DescriptorImpl) Jenkins.getInstance().getDescriptor(CloudShellConfig.class);
-        QsServerDetails server = descriptorImpl.getServer();
+        TsServerDetails server = descriptorImpl.getServer();
         QsJenkinsTaskLogger logger = new QsJenkinsTaskLogger(listener);
-        return new SandboxApiGateway(logger, server);
+       // return new SandboxApiGateway(logger, server);
+        return null;
     }
 }

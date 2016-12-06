@@ -1,9 +1,10 @@
 package org.jenkinsci.plugins.cloudshell.Loggers;
 
-import com.quali.cloudshell.QsLogger;
+
 import hudson.model.TaskListener;
 
-public class QsJenkinsTaskLogger extends QsLogger {
+
+public class QsJenkinsTaskLogger extends  org.jenkinsci.plugins.cloudshell.SnQ_manager.QsLogger{
 
     private final TaskListener listener;
 

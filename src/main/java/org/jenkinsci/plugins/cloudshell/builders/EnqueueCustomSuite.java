@@ -14,96 +14,55 @@
  */
 package org.jenkinsci.plugins.cloudshell.builders;
 
-import com.quali.cloudshell.QsExceptions.ReserveBluePrintConflictException;
-import com.quali.cloudshell.QsExceptions.SandboxApiException;
-import com.quali.cloudshell.QsServerDetails;
-import com.quali.cloudshell.SandboxApiGateway;
+
+import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep;
+
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import org.jenkinsci.plugins.cloudshell.Loggers.QsJenkinsTaskLogger;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
 import org.jenkinsci.plugins.cloudshell.TestShellBuildStep;
-import org.jenkinsci.plugins.cloudshell.VariableInjectionAction;
-import org.jenkinsci.plugins.cloudshell.action.SandboxLaunchAction;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 
-import java.io.UnsupportedEncodingException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+public class EnqueueCustomSuite extends CloudShellBuildStep
+{
 
-public class EnqueueCustomSuite extends TestShellBuildStep {
-
-
-	private final String suitename;
+	private final String suiteName;
 	private QsJenkinsTaskLogger logger;
+	private SnQApiGateway snqManager;
 
 	@DataBoundConstructor
-	public EnqueueCustomSuite(String suitename) {
-		this.suitename = suitename;
+	public EnqueueCustomSuite(String suiteName) {
+		this.suiteName = suiteName;
 	}
 
-	public String getSuitename() {
-		return suitename;
+	public String getSuiteName() {
+		return suiteName;
 	}
 
-
-	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, QsServerDetails server) throws Exception {
+	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server) throws Exception {
 		logger = new QsJenkinsTaskLogger(listener);
-		return TryToEnqueuejob(build, launcher, listener, server, maxWaitForSandboxAvailability);
+		SnQApiGateway gateway = new SnQApiGateway(logger,server);
+
+		gateway.GetSuiteDetails(suiteName);
+
+		return false;
 	}
-
-	private boolean TryToEnqueuejob(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener, QsServerDetails server,
-									long timeout_minutes) throws Exception {
-
-		long startTime = System.currentTimeMillis();
-		while ((System.currentTimeMillis()-startTime) <= timeout_minutes * 60 * 1000 ){
-
-			try {
-				return StartSandBox(build,launcher,listener,server);
-			}
-			catch (ReserveBluePrintConflictException ce){
-				listener.getLogger().println("Waiting for sandbox to become available...");
-			}
-			catch (Exception e){
-				throw e;
-			}
-			Thread.sleep(30*1000);
-
-		}
-
-		return  false;
-	}
-
-
-	private boolean StartSandBox(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, QsServerDetails qsServerDetails) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, SandboxApiException {
-		SandboxApiGateway gateway = new SandboxApiGateway(logger, qsServerDetails);
-        String sandboxId = gateway.startBlueprint(suitename, Integer.parseInt(sandboxDuration), true, null);
-        String sandboxDetails = gateway.GetSandboxDetails(sandboxId);
-        addSandboxToBuildActions(build, qsServerDetails, sandboxId, sandboxDetails);
-		return true;
-	}
-
-    private void addSandboxToBuildActions(AbstractBuild<?, ?> build, QsServerDetails serverDetails, String id, String sandboxDetails) {
-        build.addAction(new VariableInjectionAction("SANDBOX_ID",id));
-		build.addAction(new VariableInjectionAction("SANDBOX_DETAILS",sandboxDetails));
-        SandboxLaunchAction launchAction = new SandboxLaunchAction(serverDetails);
-        build.addAction(launchAction);
-        launchAction.started(id);
-    }
 
 
     @Extension
-	public static final class startSandboxDescriptor extends TSBuildStepDescriptor {
+	public static final class enqueueCustomSuiteDescriptor extends CSBuildStepDescriptor{
 
-		public startSandboxDescriptor() {
+		public enqueueCustomSuiteDescriptor() {
 			load();
 		}
 
 		@Override
 		public String getDisplayName() {
-			return "Start Sandbox";
+			return "Enqueue custom suite";
 		}
 
 	}	

@@ -15,14 +15,7 @@ limitations under the License.
 -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<f:entry title="${%Blueprint Name}" field="blueprintName">
-      <f:textbox  />
-    </f:entry>
-    <f:entry title="${%Sandbox Duration in minuets}" field="sandboxDuration">
+    <f:entry title="${%Suite Name}" field="suiteName">
           <f:textbox/>
     </f:entry>
-        <f:entry title="${%Timeout if Sandbox unavailable}" field="maxWaitForSandboxAvailability">
-              <f:textbox default="10"/>
-                Newly created Sandbox Id will be available under $SANDBOX_ID environment variable. Sandbox information will be stored under $SANDBOX_DETAILS environment variable.
-        </f:entry>
 </j:jelly>

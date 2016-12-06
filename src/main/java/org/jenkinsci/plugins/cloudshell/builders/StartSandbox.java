@@ -16,7 +16,7 @@ package org.jenkinsci.plugins.cloudshell.builders;
 
 import com.quali.cloudshell.QsExceptions.ReserveBluePrintConflictException;
 import com.quali.cloudshell.QsExceptions.SandboxApiException;
-import com.quali.cloudshell.QsServerDetails;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import com.quali.cloudshell.SandboxApiGateway;
 import hudson.Extension;
 import hudson.Launcher;
@@ -59,50 +59,50 @@ public class StartSandbox extends CloudShellBuildStep {
 		return maxWaitForSandboxAvailability;
 	}
 
-	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, QsServerDetails server) throws Exception {
+	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server) throws Exception {
 		logger = new QsJenkinsTaskLogger(listener);
 		return TryToReserveWithTimeout(build, launcher, listener, server, maxWaitForSandboxAvailability);
 	}
 
-	private boolean TryToReserveWithTimeout(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener, QsServerDetails server,
+	private boolean TryToReserveWithTimeout(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener, TsServerDetails server,
 											long timeout_minutes) throws Exception {
 
 		long startTime = System.currentTimeMillis();
-		while ((System.currentTimeMillis()-startTime) <= timeout_minutes * 60 * 1000 ){
-
-			try {
-				return StartSandBox(build,launcher,listener,server);
-			}
-			catch (ReserveBluePrintConflictException ce){
-				listener.getLogger().println("Waiting for sandbox to become available...");
-			}
-			catch (Exception e){
-				throw e;
-			}
-			Thread.sleep(30*1000);
-
-		}
+		while ((System.currentTimeMillis()-startTime) <= timeout_minutes * 60 * 1000 ){}
+//		{
+//
+//			try {
+//				return StartSandBox(build,launcher,listener,server);
+//			}
+//			catch (ReserveBluePrintConflictException ce){
+//				listener.getLogger().println("Waiting for sandbox to become available...");
+//			}
+//			catch (Exception e){
+//				throw e;
+//			}
+//			Thread.sleep(30*1000);
+//
+//		}
 
 		return  false;
 	}
 
 
-	private boolean StartSandBox(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, QsServerDetails qsServerDetails) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, SandboxApiException {
-		SandboxApiGateway gateway = new SandboxApiGateway(logger, qsServerDetails);
-        String sandboxId = gateway.startBlueprint(blueprintName, Integer.parseInt(sandboxDuration), true, null);
-        String sandboxDetails = gateway.GetSandboxDetails(sandboxId);
-        addSandboxToBuildActions(build, qsServerDetails, sandboxId, sandboxDetails);
+	private boolean StartSandBox(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails qsServerDetails) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, SandboxApiException {
+		//SandboxApiGateway gateway = new SandboxApiGateway(logger, qsServerDetails);
+        //String sandboxId = gateway.startBlueprint(blueprintName, Integer.parseInt(sandboxDuration), true, null);
+        //String sandboxDetails = gateway.GetSandboxDetails(sandboxId);
+        //addSandboxToBuildActions(build, qsServerDetails, sandboxId, sandboxDetails);
 		return true;
 	}
 
-    private void addSandboxToBuildActions(AbstractBuild<?, ?> build, QsServerDetails serverDetails, String id, String sandboxDetails) {
-        build.addAction(new VariableInjectionAction("SANDBOX_ID",id));
-		build.addAction(new VariableInjectionAction("SANDBOX_DETAILS",sandboxDetails));
-        SandboxLaunchAction launchAction = new SandboxLaunchAction(serverDetails);
-        build.addAction(launchAction);
-        launchAction.started(id);
-    }
-
+//    private void addSandboxToBuildActions(AbstractBuild<?, ?> build, QsServerDetails serverDetails, String id, String sandboxDetails) {
+//        build.addAction(new VariableInjectionAction("SANDBOX_ID",id));
+//		build.addAction(new VariableInjectionAction("SANDBOX_DETAILS",sandboxDetails));
+//        SandboxLaunchAction launchAction = new SandboxLaunchAction(serverDetails);
+//        build.addAction(launchAction);
+//        launchAction.started(id);
+//    }
 
     @Extension
 	public static final class startSandboxDescriptor extends CSBuildStepDescriptor {

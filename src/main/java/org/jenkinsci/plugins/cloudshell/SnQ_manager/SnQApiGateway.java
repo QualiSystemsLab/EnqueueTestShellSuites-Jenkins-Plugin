@@ -1,6 +1,10 @@
 package org.jenkinsci.plugins.cloudshell.SnQ_manager;
 
 
+import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.cloudshell.Loggers.QsLogger;
+
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +24,7 @@ public class SnQApiGateway
         this.proxy = new SnQAPIProxy(new TsServerDetails(serverAddress, user, pw, domain, ignoreSSL), qsLogger);
     }
 
-    public SnQApiGateway(org.jenkinsci.plugins.cloudshell.SnQ_manager.QsLogger qsLogger, TsServerDetails qsServerDetails)
+    public SnQApiGateway(QsLogger qsLogger, TsServerDetails qsServerDetails)
     {
         this.logger = qsLogger;
         this.proxy = new SnQAPIProxy(qsServerDetails, qsLogger);
@@ -28,15 +32,29 @@ public class SnQApiGateway
 
     public String GetSuiteDetails (String suitenmae) throws Exception
     {
-        String result = getSuiteDetails(suitenmae);
+        String result = "";
+        boolean isSuiteExists = getSuitesDetails(suitenmae);
 
+        if (isSuiteExists)
+        {
+            result = proxy.getSuiteJSON(suitenmae);
+        }
         return result;
+    }
+
+    public JSONObject EnqueuSuite(String suitename, String JSON)throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    {
+        return proxy.EnqueuSuite(suitename,JSON);
 
     }
-    private String getSuiteDetails(String suitename) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException
+
+    private boolean getSuitesDetails(String suiteName) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
     {
-        return proxy.GetSuiteDetails(suitename);
+        return proxy.GetSuiteDetails(suiteName);
     }
+
+
+
 
 
 }

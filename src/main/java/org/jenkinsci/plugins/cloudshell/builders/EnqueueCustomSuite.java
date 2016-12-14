@@ -15,6 +15,7 @@
 package org.jenkinsci.plugins.cloudshell.builders;
 
 
+import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep;
 
 import hudson.Extension;
@@ -23,7 +24,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import org.jenkinsci.plugins.cloudshell.Loggers.QsJenkinsTaskLogger;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
-import org.jenkinsci.plugins.cloudshell.TestShellBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 
@@ -47,7 +47,13 @@ public class EnqueueCustomSuite extends CloudShellBuildStep
 		logger = new QsJenkinsTaskLogger(listener);
 		SnQApiGateway gateway = new SnQApiGateway(logger,server);
 
-		gateway.GetSuiteDetails(suiteName);
+		String suiteJSON = gateway.GetSuiteDetails(suiteName);
+
+
+		if (!suiteJSON.isEmpty())
+		{
+			JSONObject suiteId = gateway.EnqueuSuite(suiteName,suiteJSON);
+		}
 
 		return false;
 	}

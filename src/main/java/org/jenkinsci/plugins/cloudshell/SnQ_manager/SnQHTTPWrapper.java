@@ -28,7 +28,8 @@ import java.security.NoSuchAlgorithmException;
  * SnQ
  * Created by aharon.s on 12/5/2016.
  */
-public class SnQHTTPWrapper {
+public class SnQHTTPWrapper
+{
 
     public static RestResponse ExecuteGet(String url, String token, boolean IgnoreSSL) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         HttpClient client = CreateClient(IgnoreSSL);
@@ -70,7 +71,7 @@ public class SnQHTTPWrapper {
         return IgnoreSSL? HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial((KeyStore)null, new TrustSelfSignedStrategy()).build())).build(): HttpClientBuilder.create().build();
     }
 
-    public static JSONObject ExecutePost(String url, String token, StringEntity params, boolean IgnoreSSL) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    public static JSONObject    ExecutePost(String url, String token, StringEntity params, boolean IgnoreSSL) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         HttpClient client = CreateClient(IgnoreSSL);
         HttpPost request = new HttpPost(url);
         request.addHeader("Authorization", "Basic " + token);
@@ -109,8 +110,8 @@ public class SnQHTTPWrapper {
         return JSONObject.fromObject(result.getContent());
     }
 
-    public static RestResponse InvokeLogin(String url, String port, String user, String password, String domain, boolean IgnoreSSL) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        url = url + ":"+ port + "/API/Auth/Login";
+    public static RestResponse InvokeLogin(String url, String user, String password, String domain, boolean IgnoreSSL) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        url = url + "/Auth/Login";
         HttpClient client = CreateClient(IgnoreSSL);
         StringBuilder result = new StringBuilder();
 

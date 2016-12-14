@@ -6,6 +6,12 @@ package org.jenkinsci.plugins.cloudshell.SnQ_manager;
  */
 public class Constants {
     public static String SnQDefaultport = "9000";
+    public static String SUITES_URI = "/Scheduling/SuiteTemplates";
+    public static String SELECTED_SUITE_URI = "/Scheduling/SuiteTemplates/";
+    public static String ENQUEUE_SUITE = "/Scheduling/Suites";
+
+
+
     public static String BLUEPRINT_CONFLICT_ERROR = "Blueprint has conflicting resources";
     public static String ERROR_CATEGORY = "errorCategory";
     public static String MESSAGE = "message";
@@ -16,3 +22,6 @@ public class Constants {
     public Constants() {
     }
 }
+
+
+

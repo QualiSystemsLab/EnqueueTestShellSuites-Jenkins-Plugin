@@ -111,9 +111,7 @@ public class SnQAPIProxy
             }
             return result;
         }
-
-
-        }
+    }
 
     public SuiteDetails EnqueueSuite(String suitename,String JSON)throws KeyStoreException,InterruptedException, NoSuchAlgorithmException, KeyManagementException, IOException
     {
@@ -202,33 +200,6 @@ public class SnQAPIProxy
         JSON = JSON.replace("\"SuiteName\":null","\"SuiteName\":\""+ suiteName + "\"");
 
         return JSON;
-    }
-
-    public String StartBluePrint(String blueprintName, String sandboxName, int duration, boolean isSync) throws SandboxApiException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnsupportedEncodingException {
-        RestResponse response = this.Login();
-        String url = this.GetBaseUrl(true) + Constants.BLUEPRINTS_URI + URLEncoder.encode(blueprintName, "UTF-8") + "/start";
-        StringEntity params = null;
-        String sandboxDuration = "PT" + String.valueOf(duration) + "M";
-        String string = "{\"name\":\"" + sandboxName + "\",\"duration\":\"" + sandboxDuration + "\"}";
-        params = new StringEntity(string);
-        JSONObject result = HTTPWrapper.ExecutePost(url, response.getContent(), params, this.server.ignoreSSL);
-        String newSb;
-        if(result.containsKey(Constants.ERROR_CATEGORY)) {
-            newSb = result.get(Constants.MESSAGE).toString();
-            if(newSb.equals(Constants.BLUEPRINT_CONFLICT_ERROR)) {
-                throw new ReserveBluePrintConflictException(blueprintName, newSb);
-            } else {
-                this.logger.Info("ERROR: " + result);
-                throw new SandboxApiException(blueprintName);
-            }
-        } else {
-            newSb = result.getString("id");
-            if(isSync) {
-                //this.WaitForSandBox(newSb, "Ready", 300, this.server.ignoreSSL);
-            }
-
-            return newSb;
-        }
     }
 
     private RestResponse Login() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {

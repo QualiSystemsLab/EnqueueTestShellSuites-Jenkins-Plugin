@@ -14,8 +14,6 @@
  */
 package org.jenkinsci.plugins.cloudshell.builders;
 
-
-import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep;
 
 import hudson.Extension;
@@ -30,28 +28,22 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import org.jenkinsci.plugins.cloudshell.Strcture.Test;
 
-import java.net.URI;
-
 public class EnqueueCustomSuite extends CloudShellBuildStep
 {
 
 	private final String suiteName;
 	private QsJenkinsTaskLogger logger;
-	private SnQApiGateway snqManager;
 
 	@DataBoundConstructor
 	public EnqueueCustomSuite(String suiteName) {
 		this.suiteName = suiteName;
 	}
 
-	public String getSuiteName() {
-		return suiteName;
-	}
-
 	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server) throws Exception {
 		logger = new QsJenkinsTaskLogger(listener);
 		SnQApiGateway gateway = new SnQApiGateway(logger,server);
 		SuiteDetails suiteDetails = null;
+		boolean suiteResult = false;
 
 		String suiteJSON = gateway.GetSuiteDetails(suiteName);
 
@@ -61,12 +53,21 @@ public class EnqueueCustomSuite extends CloudShellBuildStep
 		}
 		listener.getLogger().println("Suite execution ended. Suite result: " + suiteDetails.SuiteResult);
 
-		printjobs(suiteDetails, listener, server);
+		printJobs(suiteDetails, listener, server);
 
-		return false;
+		if(suiteDetails.SuiteResult.equals("Failed"))
+		{
+			suiteResult = false;
+		}
+		if(suiteDetails.SuiteResult.equals("Succeeded"))
+		{
+			suiteResult = true;
+		}
+
+		return suiteResult;
 	}
 	
-	private void printjobs(SuiteDetails suiteDetails, BuildListener listener,TsServerDetails serverDetails)
+	private void printJobs(SuiteDetails suiteDetails, BuildListener listener, TsServerDetails serverDetails)
 	{
 		for (JobsDetails job: suiteDetails.JobsDetails)
 		{

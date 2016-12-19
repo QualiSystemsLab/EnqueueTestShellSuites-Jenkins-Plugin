@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.cloudshell.SnQ_manager;
 
-
 import org.jenkinsci.plugins.cloudshell.Loggers.QsLogger;
 import org.jenkinsci.plugins.cloudshell.Strcture.SuiteDetails;
 
@@ -45,7 +44,6 @@ public class SnQApiGateway
     public SuiteDetails EnqueuSuite(String suitename, String JSON)throws InterruptedException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
     {
         return proxy.EnqueueSuite(suitename,JSON);
-
     }
 
     private boolean getSuitesDetails(String suiteName) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException

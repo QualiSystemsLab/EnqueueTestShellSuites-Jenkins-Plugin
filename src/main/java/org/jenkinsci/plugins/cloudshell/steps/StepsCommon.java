@@ -15,7 +15,8 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
-public class StepsCommon {
+public class StepsCommon
+{
     public String StartSandbox(TaskListener listener, String name, int duration, StepContext context) throws SandboxApiException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException, InterruptedException {
         listener.getLogger().println("CloudShell Starting!");
         SandboxApiGateway gateway = getSandboxApiGateway(listener);

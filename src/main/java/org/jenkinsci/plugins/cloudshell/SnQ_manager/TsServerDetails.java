@@ -12,7 +12,6 @@ public class TsServerDetails {
     public final String domain;
     public final boolean ignoreSSL;
 
-
     public TsServerDetails(String serverAddress, String port, String user, String pw, String domain, boolean ignoreSsl) {
         this.serverAddress = serverAddress;
         this.port = port;

@@ -81,6 +81,7 @@ public class TestShellConfig extends Builder {
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             server = new TsServerDetails(
                     formData.getString("serverAddress"),
+                    formData.getString("port"),
                     formData.getString("user"),
                     formData.getString("pw"),
                     formData.getString("domain"),

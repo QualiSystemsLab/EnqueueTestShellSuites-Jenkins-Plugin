@@ -71,7 +71,7 @@ public class SnQHTTPWrapper
         return IgnoreSSL? HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial((KeyStore)null, new TrustSelfSignedStrategy()).build())).build(): HttpClientBuilder.create().build();
     }
 
-    public static JSONObject    ExecutePost(String url, String token, StringEntity params, boolean IgnoreSSL) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    public static RestResponse ExecutePost(String url, String token, StringEntity params, boolean IgnoreSSL) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         HttpClient client = CreateClient(IgnoreSSL);
         HttpPost request = new HttpPost(url);
         request.addHeader("Authorization", "Basic " + token);
@@ -105,9 +105,11 @@ public class SnQHTTPWrapper
         } catch (IOException var14) {
             var14.printStackTrace();
         }
+        //return r
 
         RestResponse result = new RestResponse(out, responseCode);
-        return JSONObject.fromObject(result.getContent());
+        return result;
+        //return JSONObject.fromObject(result.getContent());
     }
 
     public static RestResponse InvokeLogin(String url, String user, String password, String domain, boolean IgnoreSSL) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {

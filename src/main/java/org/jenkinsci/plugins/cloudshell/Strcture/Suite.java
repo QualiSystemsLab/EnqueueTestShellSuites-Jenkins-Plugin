@@ -1,5 +1,4 @@
-package org.jenkinsci.plugins.cloudshell.DOM;
-import java.util.List;
+package org.jenkinsci.plugins.cloudshell.Strcture;
 
 /**
  * Created by aharon.s on 12/7/2016.

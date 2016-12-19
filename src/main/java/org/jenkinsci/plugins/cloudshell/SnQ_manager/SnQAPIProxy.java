@@ -16,7 +16,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.jenkinsci.plugins.cloudshell.DOM.*;
+import org.jenkinsci.plugins.cloudshell.Strcture.Suite;
+import org.jenkinsci.plugins.cloudshell.Strcture.SuiteDetails;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,7 +42,7 @@ public class SnQAPIProxy
         wrapper = new SnQHTTPWrapper();
     }
 
-    public boolean GetSuiteDetails(String suitename) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    public boolean GetSuitesDetails(String suitename) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
     {
         RestResponse response = this.Login();
         boolean suiteExists = false;
@@ -114,8 +115,10 @@ public class SnQAPIProxy
 
         }
 
-    public JSONObject EnqueuSuite(String suitename,String JSON)throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    public SuiteDetails EnqueueSuite(String suitename,String JSON)throws KeyStoreException,InterruptedException, NoSuchAlgorithmException, KeyManagementException, IOException
     {
+        SuiteDetails suiteDetails = null;
+
         RestResponse response = this.Login();
         if(! (response.getHttpCode()==200))
         {
@@ -130,10 +133,47 @@ public class SnQAPIProxy
             String modifiedJson= this.SetAPIJSON(JSON, suitename);
             StringEntity se = new StringEntity(modifiedJson, ContentType.APPLICATION_JSON);
 
-            JSONObject id  = wrapper.ExecutePost(url,token, se,true);
+            RestResponse suite_id  = wrapper.ExecutePost(url,token, se,true);
 
-            return id;
+            if (suite_id.getHttpCode()!=200)
+            {
+                throw new IOException("Fail execute Suite: "+ suitename );
+            }
+            else
+            {
+                suiteDetails = waitForSuiteToFinishExecution(suite_id.getContent(),token);
+            }
+
+            return suiteDetails;
         }
+    }
+
+    private SuiteDetails waitForSuiteToFinishExecution(String jobExecutionId, String restToken)throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException, InterruptedException
+    {
+        SuiteDetails suiteDetails = null;
+        boolean isSuiteRunning = true;
+        ObjectMapper mapper = new ObjectMapper();
+        RestResponse suiteDetailss;
+
+        String url = this.GetBaseUrl(false) + Constants.GET_SUITE_DETAILS + jobExecutionId;
+        url = url.replace("\"","");
+
+        int poolingTime = Constants.POOLING_TIME_SECONDS_INTERVAL;
+
+        while (isSuiteRunning)
+        {
+            suiteDetailss = wrapper.ExecuteGet(url, restToken, true);
+            suiteDetails = mapper.readValue(suiteDetailss.getContent(), SuiteDetails.class);
+
+            if (suiteDetails.SuiteStatus.equals("Ended"))
+            {
+                isSuiteRunning = false;
+            }
+            //Pause
+            Thread.sleep(poolingTime* 1000);
+        }
+
+        return suiteDetails;
     }
 
     private String SetAPIJSON(String _JSON, String suiteTemplateNmae)
@@ -191,32 +231,12 @@ public class SnQAPIProxy
         }
     }
 
-    public void StopSandbox(String sandboxId, boolean isSync) throws SandboxApiException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-        RestResponse response = this.Login();
-        String url = this.GetBaseUrl(true) + Constants.SANDBOXES_URI + sandboxId + "/stop";
-        JSONObject result = HTTPWrapper.ExecutePost(url, response.getContent(), (StringEntity)null, this.server.ignoreSSL);
-        if(result.containsKey(Constants.ERROR_CATEGORY)) {
-            throw new SandboxApiException("Failed to stop blueprint: " + result);
-        } else {
-            try {
-                if(isSync) {
-                    //this.WaitForSandBox(sandboxId, "Ended", 300, this.server.ignoreSSL);
-                }
-            } catch (Exception var7) {
-                ;
-            }
-
-        }
-    }
-
     private RestResponse Login() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         return wrapper.InvokeLogin(this.GetBaseUrl(false),this.server.user, this.server.pw, this.server.domain, this.server.ignoreSSL);
-        //return SnQHTTPWrapper.InvokeLogin(this.server.serverAddress,Constants.SnQDefaultport ,this.server.user, this.server.pw, this.server.domain, this.server.ignoreSSL);
     }
 
     private String GetBaseUrl(boolean versioned)
     {
         return "http://" + this.server.serverAddress +":"+ Constants.SnQDefaultport +"/Api";
-        //return versioned?this.server.serverAddress + "/Api" + Constants.API_VERSION:this.server.serverAddress + "/Api";
     }
 }

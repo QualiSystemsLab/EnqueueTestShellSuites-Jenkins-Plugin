@@ -24,8 +24,13 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import org.jenkinsci.plugins.cloudshell.Loggers.QsJenkinsTaskLogger;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
+import org.jenkinsci.plugins.cloudshell.Strcture.JobsDetails;
+import org.jenkinsci.plugins.cloudshell.Strcture.SuiteDetails;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
+import org.jenkinsci.plugins.cloudshell.Strcture.Test;
+
+import java.net.URI;
 
 public class EnqueueCustomSuite extends CloudShellBuildStep
 {
@@ -46,16 +51,35 @@ public class EnqueueCustomSuite extends CloudShellBuildStep
 	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server) throws Exception {
 		logger = new QsJenkinsTaskLogger(listener);
 		SnQApiGateway gateway = new SnQApiGateway(logger,server);
+		SuiteDetails suiteDetails = null;
 
 		String suiteJSON = gateway.GetSuiteDetails(suiteName);
 
-
 		if (!suiteJSON.isEmpty())
 		{
-			JSONObject suiteId = gateway.EnqueuSuite(suiteName,suiteJSON);
+			suiteDetails = gateway.EnqueuSuite(suiteName,suiteJSON);
 		}
+		listener.getLogger().println("Suite execution ended. Suite result: " + suiteDetails.SuiteResult);
+
+		printjobs(suiteDetails, listener, server);
 
 		return false;
+	}
+	
+	private void printjobs(SuiteDetails suiteDetails, BuildListener listener,TsServerDetails serverDetails)
+	{
+		for (JobsDetails job: suiteDetails.JobsDetails)
+		{
+			listener.getLogger().println("\nJob: "+ job.Name +" result: "+ job.JobResult );
+			for(Test test: job.Tests)
+			{
+
+				listener.getLogger().println("Test: "+ test.TestPath+" result: "+ test.Result );
+				listener.getLogger().println("Test Report: http://"+serverDetails.serverAddress+":"+serverDetails.port+"/Test/Report?reportId="+test.ReportId);
+				listener.getLogger().println("");
+			}
+		}
+
 	}
 
 

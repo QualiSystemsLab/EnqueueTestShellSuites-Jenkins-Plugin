@@ -94,6 +94,7 @@ public class CloudShellConfig extends Builder {
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             server = new TsServerDetails(
                     formData.getString("serverAddress"),
+					formData.getString("port"),
                     formData.getString("user"),
                     formData.getString("pw"),
 					formData.getString("domain"),
@@ -108,9 +109,8 @@ public class CloudShellConfig extends Builder {
 			return true;
 		}
 
-		public String getServerAddress() {
-	return server.serverAddress;
-}
+		public String getServerAddress() {return server.serverAddress;}
+		public String getPort() {return server.port;}
         public String getUser() {
             return server.user;
         }

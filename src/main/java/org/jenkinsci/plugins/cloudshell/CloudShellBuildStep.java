@@ -14,7 +14,7 @@
  */
 package org.jenkinsci.plugins.cloudshell;
 
-import com.quali.cloudshell.QsServerDetails;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import com.quali.cloudshell.SandboxApiGateway;
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
@@ -37,7 +37,7 @@ public abstract class CloudShellBuildStep implements Describable<CloudShellBuild
 		return Jenkins.getInstance().getDescriptorList(CloudShellBuildStep.class);
 	}
 
-	public abstract boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, QsServerDetails server)
+	public abstract boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server)
 			throws Exception;
 
 	public CSBuildStepDescriptor getDescriptor() {

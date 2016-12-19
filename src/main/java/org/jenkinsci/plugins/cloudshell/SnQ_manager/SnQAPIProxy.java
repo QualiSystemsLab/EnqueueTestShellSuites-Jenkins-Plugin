@@ -1,7 +1,222 @@
+
 package org.jenkinsci.plugins.cloudshell.SnQ_manager;
 
+import com.quali.cloudshell.*;
+import com.quali.cloudshell.QsExceptions.ReserveBluePrintConflictException;
+import com.quali.cloudshell.QsExceptions.SandboxApiException;
+
+import net.sf.json.JSONObject;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.jenkinsci.plugins.cloudshell.DOM.*;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+
 /**
+ * SnQ
  * Created by aharon.s on 12/5/2016.
  */
-public class SnQAPIProxy {
+public class SnQAPIProxy
+{
+    private final TsServerDetails server;
+    private final org.jenkinsci.plugins.cloudshell.Loggers.QsLogger logger;
+    public SnQHTTPWrapper wrapper;
+
+
+    public SnQAPIProxy(TsServerDetails server, org.jenkinsci.plugins.cloudshell.Loggers.QsLogger logger) {
+        this.server = server;
+        this.logger = logger;
+        wrapper = new SnQHTTPWrapper();
+    }
+
+    public boolean GetSuiteDetails(String suitename) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    {
+        RestResponse response = this.Login();
+        boolean suiteExists = false;
+
+        if(! (response.getHttpCode()==200))
+        {
+            throw new IOException("Fail to login, please check your server parameters");
+        }
+        else
+        {
+            String token = response.getContent();
+            String url = this.GetBaseUrl(false) + Constants.SUITES_URI;
+
+            RestResponse suitesResponse = wrapper.ExecuteGet(url, token, true);
+
+            if (suitesResponse.getHttpCode() == 200)
+            {
+                String suiteContent = suitesResponse.getContent();
+                ObjectMapper mapper = new ObjectMapper();
+
+                List<Suite> suites = mapper.readValue(suiteContent,mapper.getTypeFactory().constructCollectionType( List.class, Suite.class));
+
+                if (suites.isEmpty())
+                {
+                    throw new IOException("No Suites found on CloudShell server, please check");
+                }
+                for(Suite s:suites)
+                {
+                    if(s.Name.equals(suitename))
+                    {
+                        suiteExists = true;
+                    }
+                }
+
+
+            }
+
+        }
+
+        return suiteExists;
+
+    }
+
+    public String getSuiteJSON(String suiteName)throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    {
+        RestResponse response = this.Login();
+        if(! (response.getHttpCode()==200))
+        {
+            throw new IOException("Fail to login, please check your server parameters");
+        }
+        else
+        {
+            String token = response.getContent();
+            String url = this.GetBaseUrl(false) + Constants.SELECTED_SUITE_URI + suiteName ;
+            String result = "";
+
+            RestResponse suitesResponse = wrapper.ExecuteGet(url, token, true);
+
+            if (suitesResponse.getHttpCode()!= 200)
+            {
+                throw new IOException("Fail to get suite details, suite name: " + suiteName);
+            }
+            else
+            {
+                result = suitesResponse.getContent();
+            }
+            return result;
+        }
+
+
+        }
+
+    public JSONObject EnqueuSuite(String suitename,String JSON)throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    {
+        RestResponse response = this.Login();
+        if(! (response.getHttpCode()==200))
+        {
+            throw new IOException("Fail to login, please check your server parameters");
+        }
+        else
+        {
+            String token = response.getContent();
+            String url = this.GetBaseUrl(false) + Constants.ENQUEUE_SUITE;
+            String result = "";
+
+            String modifiedJson= this.SetAPIJSON(JSON, suitename);
+            StringEntity se = new StringEntity(modifiedJson, ContentType.APPLICATION_JSON);
+
+            JSONObject id  = wrapper.ExecutePost(url,token, se,true);
+
+            return id;
+        }
+    }
+
+    private String SetAPIJSON(String _JSON, String suiteTemplateNmae)
+    {
+        String JSON = _JSON;
+
+        //clen end
+        int domainIdlocation = JSON.indexOf(",\"DomainId");
+        int endStr = JSON.length();
+        String toRemove = JSON.substring(domainIdlocation,endStr);
+        JSON = JSON.replace(toRemove,"}");
+
+        //clean dates
+        int createDate = JSON.indexOf("\"CreateDate");
+        int emailNotification = JSON.indexOf("\"EmailNotifications");
+        toRemove = JSON.substring(createDate,emailNotification);
+        JSON = JSON.replace(toRemove,"");
+
+        //replace decimal
+        JSON= JSON.replace(".0","");
+
+        //set suite name
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+        Date date = new Date();
+        String suiteName = dateFormat.format(date).toString();
+        JSON = JSON.replace("\"SuiteName\":null","\"SuiteName\":\""+ suiteName + "\"");
+
+        return JSON;
+    }
+
+    public String StartBluePrint(String blueprintName, String sandboxName, int duration, boolean isSync) throws SandboxApiException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnsupportedEncodingException {
+        RestResponse response = this.Login();
+        String url = this.GetBaseUrl(true) + Constants.BLUEPRINTS_URI + URLEncoder.encode(blueprintName, "UTF-8") + "/start";
+        StringEntity params = null;
+        String sandboxDuration = "PT" + String.valueOf(duration) + "M";
+        String string = "{\"name\":\"" + sandboxName + "\",\"duration\":\"" + sandboxDuration + "\"}";
+        params = new StringEntity(string);
+        JSONObject result = HTTPWrapper.ExecutePost(url, response.getContent(), params, this.server.ignoreSSL);
+        String newSb;
+        if(result.containsKey(Constants.ERROR_CATEGORY)) {
+            newSb = result.get(Constants.MESSAGE).toString();
+            if(newSb.equals(Constants.BLUEPRINT_CONFLICT_ERROR)) {
+                throw new ReserveBluePrintConflictException(blueprintName, newSb);
+            } else {
+                this.logger.Info("ERROR: " + result);
+                throw new SandboxApiException(blueprintName);
+            }
+        } else {
+            newSb = result.getString("id");
+            if(isSync) {
+                //this.WaitForSandBox(newSb, "Ready", 300, this.server.ignoreSSL);
+            }
+
+            return newSb;
+        }
+    }
+
+    public void StopSandbox(String sandboxId, boolean isSync) throws SandboxApiException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        RestResponse response = this.Login();
+        String url = this.GetBaseUrl(true) + Constants.SANDBOXES_URI + sandboxId + "/stop";
+        JSONObject result = HTTPWrapper.ExecutePost(url, response.getContent(), (StringEntity)null, this.server.ignoreSSL);
+        if(result.containsKey(Constants.ERROR_CATEGORY)) {
+            throw new SandboxApiException("Failed to stop blueprint: " + result);
+        } else {
+            try {
+                if(isSync) {
+                    //this.WaitForSandBox(sandboxId, "Ended", 300, this.server.ignoreSSL);
+                }
+            } catch (Exception var7) {
+                ;
+            }
+
+        }
+    }
+
+    private RestResponse Login() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        return wrapper.InvokeLogin(this.GetBaseUrl(false),this.server.user, this.server.pw, this.server.domain, this.server.ignoreSSL);
+        //return SnQHTTPWrapper.InvokeLogin(this.server.serverAddress,Constants.SnQDefaultport ,this.server.user, this.server.pw, this.server.domain, this.server.ignoreSSL);
+    }
+
+    private String GetBaseUrl(boolean versioned)
+    {
+        return "http://" + this.server.serverAddress +":"+ Constants.SnQDefaultport +"/Api";
+        //return versioned?this.server.serverAddress + "/Api" + Constants.API_VERSION:this.server.serverAddress + "/Api";
+    }
 }

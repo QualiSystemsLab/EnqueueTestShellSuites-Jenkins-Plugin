@@ -13,7 +13,10 @@
  *   limitations under the License.
  */
 package org.jenkinsci.plugins.cloudshell;
-import com.quali.cloudshell.QsServerDetails;
+
+import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep.CSBuildStepDescriptor;
+
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.Launcher;
@@ -26,7 +29,6 @@ import hudson.model.Items;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import net.sf.json.JSONObject;
-import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep.CSBuildStepDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -46,7 +48,7 @@ public class CloudShellConfig extends Builder {
 
 	@Override
 	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)  {
-		QsServerDetails serverDetails = getDescriptor().getServer();
+		TsServerDetails serverDetails = getDescriptor().getServer();
         try
         {
             return buildStep.perform(build, launcher, listener, serverDetails);
@@ -65,7 +67,7 @@ public class CloudShellConfig extends Builder {
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
-        private QsServerDetails server;
+        private TsServerDetails server;
 
         public DescriptorImpl() {
             load();
@@ -81,7 +83,7 @@ public class CloudShellConfig extends Builder {
 
 		@Override
 		public String getDisplayName() {
-			return "CloudShell Build Step";
+			return "SnQ Job Launch";
 		}
 
 		public DescriptorExtensionList<CloudShellBuildStep, CSBuildStepDescriptor> getBuildSteps() {
@@ -90,7 +92,7 @@ public class CloudShellConfig extends Builder {
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-            server = new QsServerDetails(
+            server = new TsServerDetails(
                     formData.getString("serverAddress"),
                     formData.getString("user"),
                     formData.getString("pw"),
@@ -121,7 +123,7 @@ public class CloudShellConfig extends Builder {
         public boolean getIgnoreSSL() {
             return server.ignoreSSL;
         }
-        public QsServerDetails getServer() {return server;}
+        public TsServerDetails getServer() {return server;}
 
 	}
 }

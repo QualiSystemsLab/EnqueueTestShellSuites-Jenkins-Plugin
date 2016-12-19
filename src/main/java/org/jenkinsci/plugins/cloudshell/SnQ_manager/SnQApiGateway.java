@@ -1,31 +1,60 @@
 package org.jenkinsci.plugins.cloudshell.SnQ_manager;
 
-import com.quali.cloudshell.HTTPWrapper;
-import com.quali.cloudshell.QsServerDetails;
+
+import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.cloudshell.Loggers.QsLogger;
+
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 /**
+ * SnQ
  * Created by aharon.s on 12/4/2016.
  */
-public class SnQManager
+public class SnQApiGateway
 {
-    private QsServerDetails serverDetails;
+    private final SnQAPIProxy proxy;
+    private final QsLogger logger;
 
-    public SnQManager(QsServerDetails serverDetails)
+    public SnQApiGateway(String serverAddress, String user, String pw, String domain, boolean ignoreSSL, QsLogger qsLogger)
     {
-        this.serverDetails = serverDetails;
-        HTTPWrapper wrapper = new HTTPWrapper();
+        this.logger = qsLogger;
+        this.proxy = new SnQAPIProxy(new TsServerDetails(serverAddress, user, pw, domain, ignoreSSL), qsLogger);
     }
 
-    public QsServerDetails getServerDetails() {
-        return serverDetails;
-    }
-
-    public boolean GetSuiteDetails (String suitenmae)
+    public SnQApiGateway(QsLogger qsLogger, TsServerDetails qsServerDetails)
     {
+        this.logger = qsLogger;
+        this.proxy = new SnQAPIProxy(qsServerDetails, qsLogger);
+    }
 
-        return true;
+    public String GetSuiteDetails (String suitenmae) throws Exception
+    {
+        String result = "";
+        boolean isSuiteExists = getSuitesDetails(suitenmae);
+
+        if (isSuiteExists)
+        {
+            result = proxy.getSuiteJSON(suitenmae);
+        }
+        return result;
+    }
+
+    public JSONObject EnqueuSuite(String suitename, String JSON)throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    {
+        return proxy.EnqueuSuite(suitename,JSON);
 
     }
+
+    private boolean getSuitesDetails(String suiteName) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    {
+        return proxy.GetSuiteDetails(suiteName);
+    }
+
+
+
 
 
 }

@@ -1,8 +1,6 @@
 package org.jenkinsci.plugins.cloudshell.publisher;
 
-import com.quali.cloudshell.QsExceptions.SandboxApiException;
-import com.quali.cloudshell.QsServerDetails;
-import com.quali.cloudshell.SandboxApiGateway;
+
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -13,7 +11,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import org.jenkinsci.plugins.cloudshell.Loggers.QsJenkinsTaskLogger;
-import org.jenkinsci.plugins.cloudshell.action.SandboxLaunchAction;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
@@ -22,6 +20,10 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import com.quali.cloudshell.SandboxApiGateway;
+import com.quali.cloudshell.QsServerDetails;
+import com.quali.cloudshell.QsExceptions.SandboxApiException;
+import com.quali.cloudshell.QsLogger;
 
 /**
  * Post-build step that allow stop all matched container
@@ -45,25 +47,28 @@ public class CloudShellPublisherControl extends Recorder implements Serializable
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        List<SandboxLaunchAction> sandboxLaunchActions = build.getActions(SandboxLaunchAction.class);
-        QsJenkinsTaskLogger logger = new QsJenkinsTaskLogger(listener);
+        //List<SandboxLaunchAction> sandboxLaunchActions = build.getActions(SandboxLaunchAction.class);
+         //QsJenkinsTaskLogger logger = new QsJenkinsTaskLogger(listener);
+        QsJenkinsTaskLogger logger = new QsJenkinsTaskLogger(listener) {
+        };
 
-        for (SandboxLaunchAction sandboxItem : sandboxLaunchActions) {
-            for (String sandboxId : sandboxItem.getRunning()) {
-                try {
-                    QsServerDetails serverDetails = sandboxItem.getServerDetails();
-                    new SandboxApiGateway(logger, serverDetails).StopSandbox(sandboxId, true);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (KeyStoreException e) {
-                    e.printStackTrace();
-                } catch (KeyManagementException e) {
-                    e.printStackTrace();
-                } catch (SandboxApiException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+//        for (SandboxLaunchAction sandboxItem : sandboxLaunchActions) {
+//            for (String sandboxId : sandboxItem.getRunning()) {
+//                try {
+//                    TsServerDetails serverDetails = sandboxItem.getServerDetails();
+//                    new SandboxApiGateway(logger, serverDetails).StopSandbox(sandboxId, true);
+//
+//                } catch (NoSuchAlgorithmException e) {
+//                    e.printStackTrace();
+//                } catch (KeyStoreException e) {
+//                    e.printStackTrace();
+//                } catch (KeyManagementException e) {
+//                    e.printStackTrace();
+//                } catch (SandboxApiException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
         return true;
     }
 

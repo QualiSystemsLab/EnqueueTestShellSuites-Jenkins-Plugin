@@ -1,25 +1,19 @@
 package org.jenkinsci.plugins.cloudshell.steps;
 
 import com.quali.cloudshell.QsExceptions.SandboxApiException;
-import com.quali.cloudshell.QsServerDetails;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import com.quali.cloudshell.SandboxApiGateway;
 import hudson.EnvVars;
 import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
-import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep;
 import org.jenkinsci.plugins.cloudshell.CloudShellConfig;
 import org.jenkinsci.plugins.cloudshell.Loggers.QsJenkinsTaskLogger;
-import org.jenkinsci.plugins.workflow.steps.EnvironmentExpander;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class StepsCommon {
     public String StartSandbox(TaskListener listener, String name, int duration, StepContext context) throws SandboxApiException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException, InterruptedException {
@@ -46,8 +40,9 @@ public class StepsCommon {
     private SandboxApiGateway getSandboxApiGateway(TaskListener listener) {
         CloudShellConfig.DescriptorImpl descriptorImpl =
                 (CloudShellConfig.DescriptorImpl) Jenkins.getInstance().getDescriptor(CloudShellConfig.class);
-        QsServerDetails server = descriptorImpl.getServer();
+        TsServerDetails server = descriptorImpl.getServer();
         QsJenkinsTaskLogger logger = new QsJenkinsTaskLogger(listener);
-        return new SandboxApiGateway(logger, server);
+       // return new SandboxApiGateway(logger, server);
+        return null;
     }
 }

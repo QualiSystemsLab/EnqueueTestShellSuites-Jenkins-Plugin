@@ -25,7 +25,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import jenkins.model.Jenkins;
 
-public abstract class CloudShellBuildStep implements Describable<CloudShellBuildStep>, ExtensionPoint {
+public abstract class TSBuildStep implements Describable<TSBuildStep>, ExtensionPoint {
 
 	protected static SnQApiGateway CsServer;
 
@@ -33,8 +33,8 @@ public abstract class CloudShellBuildStep implements Describable<CloudShellBuild
 		return CsServer;
 	}
 
-	public static DescriptorExtensionList<CloudShellBuildStep, CSBuildStepDescriptor> all() {
-		return Jenkins.getInstance().getDescriptorList(CloudShellBuildStep.class);
+	public static DescriptorExtensionList<TSBuildStep, CSBuildStepDescriptor> all() {
+		return Jenkins.getInstance().getDescriptorList(TSBuildStep.class);
 	}
 
 	public abstract boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server)
@@ -44,11 +44,11 @@ public abstract class CloudShellBuildStep implements Describable<CloudShellBuild
 		return (CSBuildStepDescriptor)Jenkins.getInstance().getDescriptor(getClass());
 	}
 
-	public static abstract class CSBuildStepDescriptor extends Descriptor<CloudShellBuildStep> {
+	public static abstract class CSBuildStepDescriptor extends Descriptor<TSBuildStep> {
 
 		protected CSBuildStepDescriptor() { }
 
-		protected CSBuildStepDescriptor(Class<? extends CloudShellBuildStep> clazz) {
+		protected CSBuildStepDescriptor(Class<? extends TSBuildStep> clazz) {
 			super(clazz);
 		}
 	}

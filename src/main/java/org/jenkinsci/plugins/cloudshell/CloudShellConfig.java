@@ -14,7 +14,7 @@
  */
 package org.jenkinsci.plugins.cloudshell;
 
-import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep.CSBuildStepDescriptor;
+import org.jenkinsci.plugins.cloudshell.TSBuildStep.CSBuildStepDescriptor;
 
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
@@ -35,11 +35,11 @@ import org.kohsuke.stapler.StaplerRequest;
 
 public class CloudShellConfig extends Builder {
 
-	private final CloudShellBuildStep buildStep;
+	private final TSBuildStep buildStep;
 
 
 	@DataBoundConstructor
-	public CloudShellConfig(final CloudShellBuildStep buildStep)
+	public CloudShellConfig(final TSBuildStep buildStep)
 	{
 		this.buildStep = buildStep;
 
@@ -47,7 +47,7 @@ public class CloudShellConfig extends Builder {
 		this.buildStep.CsServer = new SnQApiGateway(null,serverDetails);
     }
 
-	public CloudShellBuildStep getBuildStep()
+	public TSBuildStep getBuildStep()
 	{
 		return buildStep;
 	}
@@ -92,8 +92,8 @@ public class CloudShellConfig extends Builder {
 			return "TestShell Suite to Launch";
 		}
 
-		public DescriptorExtensionList<CloudShellBuildStep, CSBuildStepDescriptor> getBuildSteps() {
-			return CloudShellBuildStep.all();
+		public DescriptorExtensionList<TSBuildStep, CSBuildStepDescriptor> getBuildSteps() {
+			return TSBuildStep.all();
 		}
 
         @Override

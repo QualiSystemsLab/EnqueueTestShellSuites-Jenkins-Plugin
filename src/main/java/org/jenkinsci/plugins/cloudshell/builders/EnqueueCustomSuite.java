@@ -14,8 +14,7 @@
  */
 package org.jenkinsci.plugins.cloudshell.builders;
 
-import hudson.util.ListBoxModel;
-import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep;
+import org.jenkinsci.plugins.cloudshell.TSBuildStep;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -34,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class EnqueueCustomSuite extends CloudShellBuildStep
+public class EnqueueCustomSuite extends TSBuildStep
 {
 	private final String suiteName;
 	private List<String> list = new List<String>() {		@Override

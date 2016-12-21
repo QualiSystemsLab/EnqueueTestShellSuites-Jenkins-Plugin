@@ -14,6 +14,7 @@
  */
 package org.jenkinsci.plugins.cloudshell.builders;
 
+import com.sun.org.apache.xerces.internal.impl.xs.identity.Selector;
 import org.jenkinsci.plugins.cloudshell.TSBuildStep;
 
 import hudson.Extension;
@@ -28,10 +29,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import org.jenkinsci.plugins.cloudshell.Strcture.Test;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.regex.Pattern;
 
 public class EnqueueCustomSuite extends TSBuildStep
 {
@@ -162,6 +165,11 @@ public class EnqueueCustomSuite extends TSBuildStep
 		SnQApiGateway gateway = new SnQApiGateway(logger,server);
 		SuiteDetails suiteDetails = null;
 		boolean suiteResult = false;
+
+		if (suiteName.contains(" "))
+		{
+			throw new IOException("\nSuite name cannot contain spaces\n");
+		}
 
 		String suiteJSON = gateway.GetSuiteDetails(suiteName);
 

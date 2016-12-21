@@ -33,13 +33,13 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-public class CloudShellConfig extends Builder {
+public class TSConfig extends Builder {
 
 	private final TSBuildStep buildStep;
 
 
 	@DataBoundConstructor
-	public CloudShellConfig(final TSBuildStep buildStep)
+	public TSConfig(final TSBuildStep buildStep)
 	{
 		this.buildStep = buildStep;
 
@@ -82,8 +82,8 @@ public class CloudShellConfig extends Builder {
 		@Initializer(before=InitMilestone.PLUGINS_STARTED)
         public static void addAliases() {
 			Items.XSTREAM2.addCompatibilityAlias(
-					"org.jenkinsci.plugins.cloudshell.CloudShellConfig",
-					CloudShellConfig.class
+					"org.jenkinsci.plugins.cloudshell.TSConfig",
+					TSConfig.class
 			);
 		}
 

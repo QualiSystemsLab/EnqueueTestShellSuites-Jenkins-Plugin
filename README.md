@@ -32,7 +32,7 @@ Add new Build step - "TestShell Suite to enqueue"
 
 ![Alt text](Pics/stepselector.png?raw=true)
 
-In the "Suite Name" text box type the requested suite.
+In the "Suite Name" type the name of the requested suite.
 
 ![Alt text](Pics/snqStep.png?raw=true)
 

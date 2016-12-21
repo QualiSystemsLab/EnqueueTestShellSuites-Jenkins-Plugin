@@ -5,7 +5,7 @@
 
 ##Prerequisite
 
-1) CloudShell 7.0 and above.
+1) CloudShell 6.4 and above.
 
 2) Jenkenis server 2.0 and above.
 

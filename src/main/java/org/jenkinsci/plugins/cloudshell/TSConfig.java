@@ -89,7 +89,7 @@ public class TSConfig extends Builder {
 
 		@Override
 		public String getDisplayName() {
-			return "TestShell Suite to Launch";
+			return "TestShell Suite to enqueue";
 		}
 
 		public DescriptorExtensionList<TSBuildStep, CSBuildStepDescriptor> getBuildSteps() {

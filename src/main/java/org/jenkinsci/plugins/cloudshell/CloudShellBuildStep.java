@@ -14,8 +14,8 @@
  */
 package org.jenkinsci.plugins.cloudshell;
 
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
-import com.quali.cloudshell.SandboxApiGateway;
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.Launcher;
@@ -27,9 +27,9 @@ import jenkins.model.Jenkins;
 
 public abstract class CloudShellBuildStep implements Describable<CloudShellBuildStep>, ExtensionPoint {
 
-	protected SandboxApiGateway CsServer;
+	protected static SnQApiGateway CsServer;
 
-	public SandboxApiGateway getCsServer() {
+	public static SnQApiGateway getCsServer() {
 		return CsServer;
 	}
 

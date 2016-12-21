@@ -18,4 +18,7 @@ limitations under the License.
     <f:entry title="${%Suite Name}" field="suiteName">
           <f:textbox/>
     </f:entry>
+    <!--<f:entry field="goalType" title="Suite Name:">
+       <f:select />
+    </f:entry>-->
 </j:jelly>

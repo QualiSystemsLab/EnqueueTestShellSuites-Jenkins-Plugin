@@ -1,17 +1,17 @@
 package org.jenkinsci.plugins.cloudshell.action;
 
-import com.quali.cloudshell.QsServerDetails;
 import hudson.model.Action;
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class SandboxLaunchAction implements Action, Serializable, Cloneable{
 
-    private QsServerDetails serverDetails;
+    private TsServerDetails serverDetails;
     private ArrayList<String> runningSandboxes = new ArrayList<String>();
 
-    public SandboxLaunchAction(QsServerDetails serverDetails){
+    public SandboxLaunchAction(TsServerDetails serverDetails){
 
         this.serverDetails = serverDetails;
     }
@@ -28,7 +28,7 @@ public class SandboxLaunchAction implements Action, Serializable, Cloneable{
         return null;
     }
 
-    public QsServerDetails getServerDetails(){
+    public TsServerDetails getServerDetails(){
         return this.serverDetails;
     }
 

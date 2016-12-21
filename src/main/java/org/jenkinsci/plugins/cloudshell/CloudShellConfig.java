@@ -16,6 +16,7 @@ package org.jenkinsci.plugins.cloudshell;
 
 import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep.CSBuildStepDescriptor;
 
+import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
@@ -36,13 +37,18 @@ public class CloudShellConfig extends Builder {
 
 	private final CloudShellBuildStep buildStep;
 
+
 	@DataBoundConstructor
 	public CloudShellConfig(final CloudShellBuildStep buildStep)
 	{
 		this.buildStep = buildStep;
+
+		TsServerDetails serverDetails = getDescriptor().getServer();
+		this.buildStep.CsServer = new SnQApiGateway(null,serverDetails);
     }
 
-	public CloudShellBuildStep getBuildStep() {
+	public CloudShellBuildStep getBuildStep()
+	{
 		return buildStep;
 	}
 
@@ -83,7 +89,7 @@ public class CloudShellConfig extends Builder {
 
 		@Override
 		public String getDisplayName() {
-			return "SnQ Job Launch";
+			return "TestShell Suite to Launch";
 		}
 
 		public DescriptorExtensionList<CloudShellBuildStep, CSBuildStepDescriptor> getBuildSteps() {
@@ -94,7 +100,6 @@ public class CloudShellConfig extends Builder {
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             server = new TsServerDetails(
                     formData.getString("serverAddress"),
-					formData.getString("port"),
                     formData.getString("user"),
                     formData.getString("pw"),
 					formData.getString("domain"),
@@ -110,7 +115,6 @@ public class CloudShellConfig extends Builder {
 		}
 
 		public String getServerAddress() {return server.serverAddress;}
-		public String getPort() {return server.port;}
         public String getUser() {
             return server.user;
         }

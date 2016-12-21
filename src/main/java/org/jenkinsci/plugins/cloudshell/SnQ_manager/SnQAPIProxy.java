@@ -1,28 +1,20 @@
 
 package org.jenkinsci.plugins.cloudshell.SnQ_manager;
 
-import com.quali.cloudshell.*;
-import com.quali.cloudshell.QsExceptions.ReserveBluePrintConflictException;
-import com.quali.cloudshell.QsExceptions.SandboxApiException;
-
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.jenkinsci.plugins.cloudshell.Strcture.RestResponse;
 import org.jenkinsci.plugins.cloudshell.Strcture.Suite;
 import org.jenkinsci.plugins.cloudshell.Strcture.SuiteDetails;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -42,10 +34,11 @@ public class SnQAPIProxy
         wrapper = new SnQHTTPWrapper();
     }
 
-    public boolean GetSuitesDetails(String suitename) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
+    public List<String> GetSuitesDetails() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException
     {
         RestResponse response = this.Login();
         boolean suiteExists = false;
+        List<String> suiteNames = null;
 
         if(! (response.getHttpCode()==200))
         {
@@ -69,20 +62,137 @@ public class SnQAPIProxy
                 {
                     throw new IOException("No Suites found on CloudShell server, please check");
                 }
+
+                suiteNames = new List<String>() {
+                    @Override
+                    public int size() {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean isEmpty() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean contains(Object o) {
+                        return false;
+                    }
+
+                    @Override
+                    public Iterator<String> iterator() {
+                        return null;
+                    }
+
+                    @Override
+                    public Object[] toArray() {
+                        return new Object[0];
+                    }
+
+                    @Override
+                    public <T> T[] toArray(T[] a) {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean add(String s) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean remove(Object o) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean containsAll(Collection<?> c) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean addAll(Collection<? extends String> c) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean addAll(int index, Collection<? extends String> c) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean removeAll(Collection<?> c) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean retainAll(Collection<?> c) {
+                        return false;
+                    }
+
+                    @Override
+                    public void clear() {
+
+                    }
+
+                    @Override
+                    public String get(int index) {
+                        return null;
+                    }
+
+                    @Override
+                    public String set(int index, String element) {
+                        return null;
+                    }
+
+                    @Override
+                    public void add(int index, String element) {
+
+                    }
+
+                    @Override
+                    public String remove(int index) {
+                        return null;
+                    }
+
+                    @Override
+                    public int indexOf(Object o) {
+                        return 0;
+                    }
+
+                    @Override
+                    public int lastIndexOf(Object o) {
+                        return 0;
+                    }
+
+                    @Override
+                    public ListIterator<String> listIterator() {
+                        return null;
+                    }
+
+                    @Override
+                    public ListIterator<String> listIterator(int index) {
+                        return null;
+                    }
+
+                    @Override
+                    public List<String> subList(int fromIndex, int toIndex) {
+                        return null;
+                    }
+                };
+
                 for(Suite s:suites)
                 {
-                    if(s.Name.equals(suitename))
-                    {
-                        suiteExists = true;
-                    }
+                    suiteNames.add(s.Name);
+//                    if(s.Name.equals(suitename))
+//                    {
+//                        suiteExists = true;
+//                    }
                 }
-
-
             }
 
         }
 
-        return suiteExists;
+        return suiteNames;
 
     }
 
@@ -135,7 +245,7 @@ public class SnQAPIProxy
 
             if (suite_id.getHttpCode()!=200)
             {
-                throw new IOException("Fail execute Suite: "+ suitename );
+                throw new IOException("Fail execute Suite: "+ suitename + "\n" + suite_id.getContent());
             }
             else
             {
@@ -202,12 +312,22 @@ public class SnQAPIProxy
         return JSON;
     }
 
-    private RestResponse Login() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    private RestResponse Login() throws IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         return wrapper.InvokeLogin(this.GetBaseUrl(false),this.server.user, this.server.pw, this.server.domain, this.server.ignoreSSL);
     }
 
-    private String GetBaseUrl(boolean versioned)
+    private String GetBaseUrl(boolean versioned) throws IOException
     {
-        return "http://" + this.server.serverAddress +":"+ Constants.SnQDefaultport +"/Api";
+        int portLocation = this.server.serverAddress.indexOf(":");
+
+        if(portLocation == -1)
+        {
+            throw new IOException("No port defined in ServerAddress");
+        }
+
+        String port = this.server.serverAddress.substring(portLocation, this.server.serverAddress.length());
+        String address = this.server.serverAddress.replace(port,"");
+
+        return "http://" + address +":"+ Constants.SnQDefaultport +"/Api";
     }
 }

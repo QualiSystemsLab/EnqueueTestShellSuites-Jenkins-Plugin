@@ -14,6 +14,7 @@
  */
 package org.jenkinsci.plugins.cloudshell.builders;
 
+import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.cloudshell.CloudShellBuildStep;
 
 import hudson.Extension;
@@ -28,19 +29,137 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
 import org.jenkinsci.plugins.cloudshell.Strcture.Test;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 public class EnqueueCustomSuite extends CloudShellBuildStep
 {
-
 	private final String suiteName;
-	private QsJenkinsTaskLogger logger;
+	private List<String> list = new List<String>() {		@Override
+		public int size() {			return 0;
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
+
+		@Override
+		public boolean contains(Object o) {
+			return false;
+		}
+
+		@Override
+		public Iterator<String> iterator() {
+			return null;
+		}
+
+		@Override
+		public Object[] toArray() {
+			return new Object[0];
+		}
+
+		@Override
+		public <T> T[] toArray(T[] a) {
+			return null;
+		}
+
+		@Override
+		public boolean add(String s) {
+			return false;
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			return false;
+		}
+
+		@Override
+		public boolean containsAll(Collection<?> c) {
+			return false;
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends String> c) {
+			return false;
+		}
+
+		@Override
+		public boolean addAll(int index, Collection<? extends String> c) {
+			return false;
+		}
+
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			return false;
+		}
+
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			return false;
+		}
+
+		@Override
+		public void clear() {
+
+		}
+
+		@Override
+		public String get(int index) {
+			return null;
+		}
+
+		@Override
+		public String set(int index, String element) {
+			return null;
+		}
+
+		@Override
+		public void add(int index, String element) {
+
+		}
+
+		@Override
+		public String remove(int index) {
+			return null;
+		}
+
+		@Override
+		public int indexOf(Object o) {
+			return 0;
+		}
+
+		@Override
+		public int lastIndexOf(Object o) {
+			return 0;
+		}
+
+		@Override
+		public ListIterator<String> listIterator() {
+			return null;
+		}
+
+		@Override
+		public ListIterator<String> listIterator(int index) {
+			return null;
+		}
+
+		@Override
+		public List<String> subList(int fromIndex, int toIndex) {
+			return null;
+		}
+	};
 
 	@DataBoundConstructor
-	public EnqueueCustomSuite(String suiteName) {
+	public EnqueueCustomSuite(String suiteName)
+	{
 		this.suiteName = suiteName;
 	}
 
 	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server) throws Exception {
-		logger = new QsJenkinsTaskLogger(listener);
+		QsJenkinsTaskLogger logger = new QsJenkinsTaskLogger(listener);
 		SnQApiGateway gateway = new SnQApiGateway(logger,server);
 		SuiteDetails suiteDetails = null;
 		boolean suiteResult = false;
@@ -55,10 +174,6 @@ public class EnqueueCustomSuite extends CloudShellBuildStep
 
 		printJobs(suiteDetails, listener, server);
 
-		if(suiteDetails.SuiteResult.equals("Failed"))
-		{
-			suiteResult = false;
-		}
 		if(suiteDetails.SuiteResult.equals("Succeeded"))
 		{
 			suiteResult = true;
@@ -76,7 +191,7 @@ public class EnqueueCustomSuite extends CloudShellBuildStep
 			{
 
 				listener.getLogger().println("Test: "+ test.TestPath+" result: "+ test.Result );
-				listener.getLogger().println("Test Report: http://"+serverDetails.serverAddress+":"+serverDetails.port+"/Test/Report?reportId="+test.ReportId);
+				listener.getLogger().println("Test Report: http://"+serverDetails.serverAddress +"/Test/Report?reportId="+test.ReportId);
 				listener.getLogger().println("");
 			}
 		}
@@ -90,6 +205,18 @@ public class EnqueueCustomSuite extends CloudShellBuildStep
 		public enqueueCustomSuiteDescriptor() {
 			load();
 		}
+
+//		public ListBoxModel doFillGoalTypeItems()throws Exception
+//		{
+//			ListBoxModel items = new ListBoxModel();
+//
+//			List<String> suitesNames = getCsServer().getSuitesDetails();
+//			for (String suiteName:suitesNames)
+//			{
+//				items.add(suiteName);
+//			}
+//			return items;
+//		}
 
 		@Override
 		public String getDisplayName() {

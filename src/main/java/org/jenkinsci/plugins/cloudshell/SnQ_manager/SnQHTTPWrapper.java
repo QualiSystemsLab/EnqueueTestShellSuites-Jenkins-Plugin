@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.cloudshell.SnQ_manager;
 
-import com.quali.cloudshell.RestResponse;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -14,6 +13,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
+import org.jenkinsci.plugins.cloudshell.Strcture.RestResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;

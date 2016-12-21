@@ -30,7 +30,7 @@ public class JobsDetails
     public boolean StopOnFail ;
     public boolean StopOnError ;
     public List<Test> Tests ;
-    public String Topology ;
+    public Topology Topology ;
     public double DurationTimeBuffer ;
     public String EmailNotifications ;
     public String Type ;

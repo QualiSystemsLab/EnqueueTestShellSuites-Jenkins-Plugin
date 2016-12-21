@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by aharon.s on 12/21/2016.
  */
-public class RequirementsInput
+public class AdditionalInput
 {
     public String Name;
     public String Value;

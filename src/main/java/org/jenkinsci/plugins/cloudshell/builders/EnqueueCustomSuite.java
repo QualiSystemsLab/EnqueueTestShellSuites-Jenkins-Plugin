@@ -160,6 +160,10 @@ public class EnqueueCustomSuite extends TSBuildStep
 		this.suiteName = suiteName;
 	}
 
+	public String getSuiteName() {
+		return suiteName;
+	}
+
 	public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener, TsServerDetails server) throws Exception {
 		QsJenkinsTaskLogger logger = new QsJenkinsTaskLogger(listener);
 		SnQApiGateway gateway = new SnQApiGateway(logger,server);
@@ -168,7 +172,7 @@ public class EnqueueCustomSuite extends TSBuildStep
 
 		if (suiteName.contains(" "))
 		{
-			throw new IOException("\nSuite name cannot contain spaces\n");
+			throw new IOException("\nSuite name cannot contain white spaces\n");
 		}
 
 		String suiteJSON = gateway.GetSuiteDetails(suiteName);
@@ -198,7 +202,7 @@ public class EnqueueCustomSuite extends TSBuildStep
 			{
 
 				listener.getLogger().println("Test: "+ test.TestPath+" result: "+ test.Result );
-				listener.getLogger().println("Test Report: http://"+serverDetails.serverAddress +"/Test/Report?reportId="+test.ReportId);
+				listener.getLogger().println("Test Report: http://"+serverDetails.serverAddress +":" + serverDetails.port +"/Test/Report?reportId="+test.ReportId);
 				listener.getLogger().println("");
 			}
 		}
@@ -212,18 +216,6 @@ public class EnqueueCustomSuite extends TSBuildStep
 		public enqueueCustomSuiteDescriptor() {
 			load();
 		}
-
-//		public ListBoxModel doFillGoalTypeItems()throws Exception
-//		{
-//			ListBoxModel items = new ListBoxModel();
-//
-//			List<String> suitesNames = getCsServer().getSuitesDetails();
-//			for (String suiteName:suitesNames)
-//			{
-//				items.add(suiteName);
-//			}
-//			return items;
-//		}
 
 		@Override
 		public String getDisplayName() {

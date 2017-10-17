@@ -100,6 +100,7 @@ public class TSConfig extends Builder {
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             server = new TsServerDetails(
                     formData.getString("serverAddress"),
+					formData.getString("port"),
                     formData.getString("user"),
                     formData.getString("pw"),
 					formData.getString("domain"),
@@ -115,6 +116,7 @@ public class TSConfig extends Builder {
 		}
 
 		public String getServerAddress() {return server.serverAddress;}
+		public String getPort() {return server.port;}
         public String getUser() {
             return server.user;
         }

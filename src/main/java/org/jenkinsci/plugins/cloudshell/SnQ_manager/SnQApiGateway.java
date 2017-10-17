@@ -18,10 +18,10 @@ public class SnQApiGateway
     private final SnQAPIProxy proxy;
     private final QsLogger logger;
 
-    public SnQApiGateway(String serverAddress, String user, String pw, String domain, boolean ignoreSSL, QsLogger qsLogger)
+    public SnQApiGateway(String serverAddress,String port, String user, String pw, String domain, boolean ignoreSSL, QsLogger qsLogger)
     {
         this.logger = qsLogger;
-        this.proxy = new SnQAPIProxy(new TsServerDetails(serverAddress, user, pw, domain, ignoreSSL), qsLogger);
+        this.proxy = new SnQAPIProxy(new TsServerDetails(serverAddress,port, user, pw, domain, ignoreSSL), qsLogger);
     }
 
     public SnQApiGateway(QsLogger qsLogger, TsServerDetails qsServerDetails)

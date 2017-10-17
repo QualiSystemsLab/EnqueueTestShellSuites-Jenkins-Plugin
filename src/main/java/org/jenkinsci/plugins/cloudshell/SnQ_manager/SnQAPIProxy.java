@@ -318,16 +318,6 @@ public class SnQAPIProxy
 
     private String GetBaseUrl(boolean versioned) throws IOException
     {
-        int portLocation = this.server.serverAddress.indexOf(":");
-
-        if(portLocation == -1)
-        {
-            throw new IOException("No port defined in ServerAddress");
-        }
-
-        String port = this.server.serverAddress.substring(portLocation, this.server.serverAddress.length());
-        String address = this.server.serverAddress.replace(port,"");
-
-        return "http://" + address +":"+ Constants.SnQDefaultport +"/Api";
+        return "http://" + this.server.serverAddress +":"+ Constants.SnQDefaultport +"/Api";
     }
 }

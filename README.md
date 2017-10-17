@@ -5,14 +5,14 @@
 
 ##Prerequisite
 
-1) CloudShell 6.4 and above.
+1) CloudShell 8.0 and above.
 
 2) Jenkenis server 2.0 and above.
 
 
 
 ## Installation
-1) Download the hpi package from the releases tab
+1) Download the hpi package.
 
 2) Navigate to the advanced section under the plugins tab in jenkins
 

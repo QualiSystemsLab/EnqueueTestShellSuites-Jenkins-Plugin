@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.cloudshell.Loggers;
+package org.jenkinsci.plugins.testshell.Loggers;
 
 
 import hudson.model.TaskListener;

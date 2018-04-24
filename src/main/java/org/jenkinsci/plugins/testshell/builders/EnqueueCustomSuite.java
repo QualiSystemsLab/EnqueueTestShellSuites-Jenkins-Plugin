@@ -12,29 +12,27 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.jenkinsci.plugins.cloudshell.builders;
+package org.jenkinsci.plugins.testshell.builders;
 
-import com.sun.org.apache.xerces.internal.impl.xs.identity.Selector;
-import org.jenkinsci.plugins.cloudshell.TSBuildStep;
+import org.jenkinsci.plugins.testshell.TSBuildStep;
 
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
-import org.jenkinsci.plugins.cloudshell.Loggers.QsJenkinsTaskLogger;
-import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
-import org.jenkinsci.plugins.cloudshell.Strcture.JobsDetails;
-import org.jenkinsci.plugins.cloudshell.Strcture.SuiteDetails;
+import org.jenkinsci.plugins.testshell.Loggers.QsJenkinsTaskLogger;
+import org.jenkinsci.plugins.testshell.SnQ_manager.SnQApiGateway;
+import org.jenkinsci.plugins.testshell.Strcture.JobsDetails;
+import org.jenkinsci.plugins.testshell.Strcture.SuiteDetails;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
-import org.jenkinsci.plugins.cloudshell.Strcture.Test;
+import org.jenkinsci.plugins.testshell.SnQ_manager.TsServerDetails;
+import org.jenkinsci.plugins.testshell.Strcture.Test;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.regex.Pattern;
 
 public class EnqueueCustomSuite extends TSBuildStep
 {

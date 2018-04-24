@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.cloudshell.SnQ_manager;
+package org.jenkinsci.plugins.testshell.SnQ_manager;
 
 /**
  * SnQ

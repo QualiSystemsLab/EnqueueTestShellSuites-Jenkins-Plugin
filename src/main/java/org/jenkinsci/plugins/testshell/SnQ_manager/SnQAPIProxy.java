@@ -1,12 +1,12 @@
 
-package org.jenkinsci.plugins.cloudshell.SnQ_manager;
+package org.jenkinsci.plugins.testshell.SnQ_manager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.jenkinsci.plugins.cloudshell.Strcture.RestResponse;
-import org.jenkinsci.plugins.cloudshell.Strcture.Suite;
-import org.jenkinsci.plugins.cloudshell.Strcture.SuiteDetails;
+import org.jenkinsci.plugins.testshell.Strcture.RestResponse;
+import org.jenkinsci.plugins.testshell.Strcture.Suite;
+import org.jenkinsci.plugins.testshell.Strcture.SuiteDetails;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -24,11 +24,11 @@ import java.util.*;
 public class SnQAPIProxy
 {
     private final TsServerDetails server;
-    private final org.jenkinsci.plugins.cloudshell.Loggers.QsLogger logger;
+    private final org.jenkinsci.plugins.testshell.Loggers.QsLogger logger;
     public SnQHTTPWrapper wrapper;
 
 
-    public SnQAPIProxy(TsServerDetails server, org.jenkinsci.plugins.cloudshell.Loggers.QsLogger logger) {
+    public SnQAPIProxy(TsServerDetails server, org.jenkinsci.plugins.testshell.Loggers.QsLogger logger) {
         this.server = server;
         this.logger = logger;
         wrapper = new SnQHTTPWrapper();

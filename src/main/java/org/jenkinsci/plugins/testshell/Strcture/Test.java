@@ -1,10 +1,6 @@
-package org.jenkinsci.plugins.cloudshell.Strcture;
+package org.jenkinsci.plugins.testshell.Strcture;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.text.DateFormat;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by aharon.s on 12/18/2016.

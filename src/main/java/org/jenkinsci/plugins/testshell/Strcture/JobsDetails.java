@@ -1,6 +1,4 @@
-package org.jenkinsci.plugins.cloudshell.Strcture;
-
-import jnr.ffi.Struct;
+package org.jenkinsci.plugins.testshell.Strcture;
 
 import java.util.List;
 

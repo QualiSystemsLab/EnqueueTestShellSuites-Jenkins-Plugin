@@ -12,10 +12,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.jenkinsci.plugins.cloudshell;
+package org.jenkinsci.plugins.testshell;
 
-import org.jenkinsci.plugins.cloudshell.SnQ_manager.SnQApiGateway;
-import org.jenkinsci.plugins.cloudshell.SnQ_manager.TsServerDetails;
+import org.jenkinsci.plugins.testshell.SnQ_manager.SnQApiGateway;
+import org.jenkinsci.plugins.testshell.SnQ_manager.TsServerDetails;
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.Launcher;

@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.cloudshell;
+package org.jenkinsci.plugins.testshell;
 
 import hudson.EnvVars;
 import hudson.model.AbstractBuild;

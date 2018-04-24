@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.cloudshell.Strcture;
+package org.jenkinsci.plugins.testshell.Strcture;
 
 /**
  * Created by aharon.s on 12/20/2016.
